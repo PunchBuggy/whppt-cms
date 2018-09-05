@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "auth-header": "^0.3.1",
+    "bcrypt": "^3.0.0",
     "body-parser": "~1.17.1",
     "cloudinary": "^1.11.0",
     "debug": "~2.6.3",

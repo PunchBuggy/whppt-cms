@@ -113,6 +113,13 @@ module.exports = ({ $db, $logger, $config }) => {
       });
     },
 
+    signUp(creds) {
+      return $db.User.signUp(creds).then(user => ({
+        user: {id: user.id, email: user.email},
+        access_token: this.createAccessToken(user)
+      }))
+    },
+
     ROLES: {
       READ: "read",
       EDIT: "edit",
