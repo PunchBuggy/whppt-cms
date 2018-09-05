@@ -20,15 +20,16 @@ export default ({ $Id, $logger, $config, $projects }) => {
   return {
     forLogin: async ({ email, password }) => {
       if (rootUser && email === rootUser.id && password === rootUser.password)
-        return Promise.resolve({
+        return {
           id: rootUser.id,
           email: rootUser.email,
+          rootUser: true,
           projects: map($projects, p => ({
             id: p.id,
             name: p.name,
             permissions: ["own", "admin", "edit", "read"]
           }))
-        });
+        };
 
       const { User, context } = UserContext();
 

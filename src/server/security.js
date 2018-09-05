@@ -105,19 +105,22 @@ module.exports = ({ $db, $logger, $config }) => {
     },
 
     login(creds) {
-      return $db.User.forLogin(creds).then(user => {
-        return Promise.resolve({
-          user: { id: user.id, email: user.email },
-          access_token: this.createAccessToken(user)
-        });
-      });
+      return $db.User.forLogin(creds).then(this._generateUserResponse.bind(this));
     },
 
     signUp(creds) {
-      return $db.User.signUp(creds).then(user => ({
-        user: {id: user.id, email: user.email},
+      return $db.User.signUp(creds).then(this._generateUserResponse.bind(this))
+    },
+
+    _generateUserResponse(user) {
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          rootUser: user.rootUser,
+        },
         access_token: this.createAccessToken(user)
-      }))
+      }
     },
 
     ROLES: {
