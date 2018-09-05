@@ -43,7 +43,7 @@ export default ({ $Id, $logger, $config, $projects }) => {
         throw new Error('Invalid credentials');
       }
 
-      return {email, password}
+      return user
     },
 
     signUp: async ({email, password}) => {
