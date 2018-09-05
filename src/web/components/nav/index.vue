@@ -4,6 +4,7 @@
     <div class="row">
       <div class="col">{{project}}</div>
       <div class="col user_menus">
+        <span>Hello, {{ user.email || user.id }}</span>
         <a id="nav_logout"
            href="/"
            @click="logout()">Log Out</a>
