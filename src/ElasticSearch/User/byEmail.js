@@ -16,7 +16,12 @@ export default ({$elastic, $indexSettings}) => {
       if (!hits.length) {
         return null
       }
-      return hits[0]._source
+
+      const hit = hits[0]
+      return {
+        ...hit._source,
+        id: hit._source.id || hit._id
+      }
     })
   }
 }

@@ -6,7 +6,6 @@ export default ({$elastic, $options, $indexSettings}) => {
     const saltRounds = 10
     return bcrypt.hash(password, saltRounds).then(hash => {
       const user = {
-        id: id,
         email: email,
         password: hash,
         projects: [],
@@ -21,7 +20,10 @@ export default ({$elastic, $options, $indexSettings}) => {
         if (response.error) {
           throw new Error(response.error);
         }
-        return user
+        return {
+          ...user,
+          id: id
+        }
       })
     })
   }
