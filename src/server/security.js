@@ -20,6 +20,7 @@ module.exports = ({ $db, $logger, $config }) => {
       const scope = {
         account: user.id,
         email: user.email,
+        rootUser: user.rootUser,
         projects: user.projects
       };
 
@@ -75,6 +76,16 @@ module.exports = ({ $db, $logger, $config }) => {
     },
 
     authorise: {
+      root() {
+        return (req, res, next) => {
+          const permissions = req.token.scope;
+          if (!permissions.rootUser) {
+            return res.sendStatus(403);
+          }
+          next();
+        }
+      },
+
       account(accountParam) {
         return (req, res, next) => {
           const requestedAccount = req.params[accountParam];
@@ -85,6 +96,7 @@ module.exports = ({ $db, $logger, $config }) => {
           next();
         };
       },
+
       project(project_param, role) {
         return (req, res, next) => {
           const permissions = req.token.scope;

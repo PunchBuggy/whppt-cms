@@ -2,7 +2,16 @@
 <div id="app-header">
   <div class="container">
     <div class="row">
-      <div class="col">{{project}}</div>
+      <div class="col">
+        <router-link :to="{name: 'Projects'}">
+          {{project}}
+        </router-link>
+      </div>
+      <div class="col" v-if="user.rootUser">
+        <router-link :to="{name: 'permissions'}">
+          Manage Users
+        </router-link>
+      </div>
       <div class="col user_menus">
         <span>Hello, {{ user.email || user.id }}</span>
         <a id="nav_logout"

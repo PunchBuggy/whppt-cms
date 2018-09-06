@@ -1,3 +1,4 @@
+import list from './list';
 import byEmail from "./byEmail";
 import signUp from "./signUp";
 
@@ -24,6 +25,7 @@ export default context => {
   }
 
   return {
+    list: list(args),
     byEmail: byEmail(args),
     signUp: signUp(args),
   };

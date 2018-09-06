@@ -10,6 +10,7 @@ import me from 'Components/Users/Details';
 import projects from 'Components/project/list';
 import project from 'Components/project/item';
 import type from 'Components/project/type';
+import permissions from 'Components/Users/permissions'
 
 const secureRoute = (to, from, next) => {
   let user = JSON.parse(localStorage.getItem('user'));
@@ -20,12 +21,27 @@ const secureRoute = (to, from, next) => {
   });
 };
 
+const rootOnly = (to, from, next) => {
+  let user = JSON.parse(localStorage.getItem('user'));
+  if (user && user.rootUser) return next();
+  return next({
+    path: '/',
+    query: { redirect: to.fullPath },
+  });
+}
+
 // TODO: Remove the old component
 const router = new VueRouter({
   // mode: 'history',
   routes: [
     { path: '/', name: 'Home', component: home },
     { path: '/me', name: 'me', component: me, beforeEnter: secureRoute },
+    {
+      path: '/permissions',
+      name: 'permissions',
+      component: permissions,
+      beforeEnter: rootOnly
+    },
     { path: '/projects', name: 'Projects', component: projects, beforeEnter: secureRoute },
     {
       path: '/project/:projectId',

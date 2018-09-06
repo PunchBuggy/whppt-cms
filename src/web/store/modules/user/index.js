@@ -6,7 +6,8 @@ import api from '@/api';
 export default {
   namespaced: true,
   state: {
-    user: {}
+    user: {},
+    list: [],
   },
   actions,
   mutations

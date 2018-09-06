@@ -18,6 +18,11 @@ export default ({ $Id, $logger, $config, $projects }) => {
       : undefined;
 
   return {
+    list: () => {
+      const { User, context } = UserContext();
+      return User.list(context)
+    },
+
     forLogin: async ({ email, password }) => {
       if (rootUser && email === rootUser.id && password === rootUser.password)
         return {
