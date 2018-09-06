@@ -8,7 +8,7 @@ module.exports = ({ $db, $logger, $config }) => {
   const issuer = _.get($config, "security.token.issuer", "whppt");
   const audience = _.get($config, "security.token.audience", "");
 
-  return {
+  const security = {
     createIdToken(user) {
       return jwt.sign(user, secret, { expiresIn: 60 * 60 * 24 });
     },
@@ -115,7 +115,20 @@ module.exports = ({ $db, $logger, $config }) => {
 
           return res.sendStatus(403);
         };
-      }
+      },
+
+      type(projParam, typeParam, role) {
+        return (req, res, next) => {
+          const hasAccess = security.checkTypePermission(
+            req,
+            req.params[projParam],
+            req.params[typeParam],
+            role
+          )
+          if (hasAccess) { return next(); }
+          return res.sendStatus(403);
+        }
+      },
     },
 
     checkTypePermission(req, projectId, typeId, role) {
@@ -156,4 +169,6 @@ module.exports = ({ $db, $logger, $config }) => {
       ADMIN: "admin"
     }
   };
+
+  return security;
 };
