@@ -1,6 +1,7 @@
 import list from './list';
 import byEmail from "./byEmail";
 import signUp from "./signUp";
+import save from "./save";
 
 export default context => {
   let index = 'whppt';
@@ -28,5 +29,6 @@ export default context => {
     list: list(args),
     byEmail: byEmail(args),
     signUp: signUp(args),
+    save: save(args),
   };
 };

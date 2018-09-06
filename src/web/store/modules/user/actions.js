@@ -19,5 +19,10 @@ export default {
       .then(result => {
         commit('loadUserDetails', result.data)
       })
-  }
+  },
+
+  save({state}, id) {
+    const user = state.list.find(user => user.id === id)
+    return axios.post(`/api/user/${id}`, user)
+  },
 };

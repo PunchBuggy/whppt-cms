@@ -66,6 +66,11 @@ export default ({ $Id, $logger, $config, $projects }) => {
         email,
         password
       })
-    }
+    },
+
+    save: async user => {
+      const {User, context} = UserContext();
+      return User.save(context, user)
+    },
   };
 };

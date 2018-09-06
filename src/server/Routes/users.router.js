@@ -13,5 +13,16 @@ export default ({$JsonRouter, $security, $db}) => {
     }
   );
 
+  router.post('/api/user/:id',
+    $security.authenticate(),
+    $security.authorise.root(),
+    req => {
+      return $db.User.save({
+        id: req.params.id,
+        user: req.body,
+      })
+    }
+  );
+
   return router
 }

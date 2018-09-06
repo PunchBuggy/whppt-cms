@@ -3,7 +3,10 @@
   <app-nav></app-nav>
   <div v-for="user in userList" :key="user.id" class="container">
     {{ user }}
-    <h4>{{ user.email || user.id }}</h4>
+    <h4>
+      {{ user.email || user.id }}
+      <button @click="save(user.id)">Save</button>
+    </h4>
     <table>
       <thead>
         <tr>
@@ -58,7 +61,7 @@ export default {
     this.loadProjects()
   },
   methods: {
-    ...Vuex.mapActions('user', ['loadUsers']),
+    ...Vuex.mapActions('user', ['loadUsers', 'save']),
     ...Vuex.mapActions('project', ['loadProjects']),
     ...Vuex.mapMutations('user', ['setPermission']),
 
