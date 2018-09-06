@@ -20,7 +20,7 @@ export default ({ $JsonRouter, $security, $projects, $db, $ROLES }) => {
     req => {
       const projectId = req.params.projectId
       const project = _.find($projects, p => p.id === projectId)
-      const types = project.types.filter(type => $security.checkTypePermission(req, projectId, type.id, $ROLES.READ))
+      const types = project.types.filter(type => $security.checkTypePermission(req.token, projectId, type.id, $ROLES.READ))
 
       return Promise.resolve({
         ...project,

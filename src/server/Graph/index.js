@@ -4,8 +4,8 @@ const _ = require("lodash");
 import ProjectLoader from "./ProjectLoader";
 const authenticate = require("./authenticate");
 
-export default ({ $projects, $createAccessToken, $db, $decodeAccessToken }) => {
-  const projectLoader = ProjectLoader({ $decodeAccessToken, $db });
+export default ({ $projects, $createAccessToken, $db, $decodeAccessToken, $security }) => {
+  const projectLoader = ProjectLoader({ $decodeAccessToken, $db, $security });
 
   const schemas = {};
   _.each($projects, project => {

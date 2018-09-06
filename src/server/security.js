@@ -120,7 +120,7 @@ module.exports = ({ $db, $logger, $config }) => {
       type(projParam, typeParam, role) {
         return (req, res, next) => {
           const hasAccess = security.checkTypePermission(
-            req,
+            req.token,
             req.params[projParam],
             req.params[typeParam],
             role
@@ -131,8 +131,8 @@ module.exports = ({ $db, $logger, $config }) => {
       },
     },
 
-    checkTypePermission(req, projectId, typeId, role) {
-      const user = req.token.scope
+    checkTypePermission(token, projectId, typeId, role) {
+      const user = token.scope
       const project = user.projects.find(project => project.id === projectId)
 
       if (!project) { return false }
