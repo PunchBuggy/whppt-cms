@@ -15,21 +15,32 @@ export default {
       project = {
         ...payload.project,
         permissions: [],
+        typePermissions: {}
       }
       user.projects.push(project)
     }
 
-    if (payload.value) {
-      project.permissions.push(payload.role)
-    } else {
-      const index = project.permissions.indexOf(payload.role)
-      if (index > -1) {
-        project.permissions.splice(index, 1)
+    let permissions = project.permissions
+    if (payload.type) {
+      if (!project.typePermissions) {
+        Vue.set(project, 'typePermissions', {})
+      }
+
+      permissions = project.typePermissions[payload.type.id]
+
+      if (!permissions) {
+        permissions = []
+        Vue.set(project.typePermissions, payload.type.id, permissions)
       }
     }
 
-    if (!project.permissions.length) {
-      user.projects = user.projects.filter(proj => proj.id !== project.id)
+    if (payload.value) {
+      permissions.push(payload.role)
+    } else {
+      const index = permissions.indexOf(payload.role)
+      if (index > -1) {
+        permissions.splice(index, 1)
+      }
     }
   },
 
