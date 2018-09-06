@@ -1,7 +1,7 @@
 <template>
 <div class="main">
   <app-nav></app-nav>
-  <div v-for="user in list" :key="user.id" class="container">
+  <div v-for="user in userList" :key="user.id" class="container">
     {{ user }}
     <h4>{{ user.email || user.id }}</h4>
     <table>
@@ -14,13 +14,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="project in user.projects" :key="project.id">
+        <tr v-for="project in projectList" :key="project.id">
           <th scope="row">{{ project.name }}</th>
           <td v-for="role in roles" :key="role">
             <input
               type="checkbox"
               :id="user.id + '|' + project.id + '|' + role"
-              :checked="project.permissions.includes(role)"
+              :checked="userHasRole(user, project, role)"
               @change="setPermission({
                 user: user.id,
                 project: project.id,
@@ -55,12 +55,22 @@ export default {
   }),
   created() {
     this.loadUsers()
+    this.loadProjects()
   },
   methods: {
     ...Vuex.mapActions('user', ['loadUsers']),
+    ...Vuex.mapActions('project', ['loadProjects']),
     ...Vuex.mapMutations('user', ['setPermission']),
+
+    userHasRole(user, project, role) {
+      const userProject = user.projects.find(p => p.id === project.id)
+      return userProject.permissions.includes(role)
+    }
   },
-  computed: Vuex.mapState('user', ['list'])
+  computed: {
+   ...Vuex.mapState('user', {userList: 'list'}),
+   ...Vuex.mapState('project', {projectList: 'list'}),
+  }
 }
 </script>
 
