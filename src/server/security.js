@@ -106,14 +106,28 @@ module.exports = ({ $db, $logger, $config }) => {
           });
 
           const hasProjectAccess =
-            !!projectPermission &&
-            _.includes(projectPermission.permissions, role);
+            !!projectPermission && (
+              _.includes(projectPermission.permissions, role) ||
+              _.values(projectPermission.typePermissions).some(perm => perm.includes(role))
+            );
 
           if (hasProjectAccess) return next();
 
           return res.sendStatus(403);
         };
       }
+    },
+
+    checkTypePermission(req, projectId, typeId, role) {
+      const user = req.token.scope
+      const project = user.projects.find(project => project.id === projectId)
+
+      if (!project) { return false }
+      if (project.permissions.includes(role)) { return true }
+      if (!project.typePermissions) { return false }
+
+      const typePermissions = project.typePermissions[typeId]
+      return typePermissions && typePermissions.includes(role)
     },
 
     login(creds) {

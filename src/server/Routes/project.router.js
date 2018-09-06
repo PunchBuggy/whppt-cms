@@ -18,9 +18,14 @@ export default ({ $JsonRouter, $security, $projects, $db, $ROLES }) => {
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.READ),
     req => {
-      return Promise.resolve(
-        _.find($projects, p => p.id === req.params.projectId)
-      );
+      const projectId = req.params.projectId
+      const project = _.find($projects, p => p.id === projectId)
+      const types = project.types.filter(type => $security.checkTypePermission(req, projectId, type.id, $ROLES.READ))
+
+      return Promise.resolve({
+        ...project,
+        types,
+      });
       // return queryProjectById(req.params.projectId).then(proj => {
       //   const project = _.find(projects, { id: proj.key });
       //   return {
