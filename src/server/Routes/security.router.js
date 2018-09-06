@@ -4,11 +4,9 @@
 export default ({ $JsonRouter, $security }) => {
   const router = $JsonRouter();
 
-  // router.post("/api/signup", req => {
-  //   return createCommand.handle(req.body).then(result => {
-  //     return sec.login(result);
-  //   });
-  // });
+  router.post("/api/signup", req => {
+    return $security.signUp(req.body)
+  });
 
   router.post("/api/login", req => {
     return $security.login(req.body);

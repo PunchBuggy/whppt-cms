@@ -37,6 +37,5 @@ export default {
     padding-left: 300px;
     height: 100%;
     padding-top: 60px;
-
 }
 </style>

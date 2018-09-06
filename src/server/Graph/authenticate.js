@@ -1,7 +1,5 @@
 const { GraphQLObjectType, GraphQLString, GraphQLNonNull } = require("graphql");
 
-// const queryForLogin = require("../domain/User/queries/forLogin");
-
 const AuthenticatedResultType = new GraphQLObjectType({
   name: `Authenticated_Result`,
   fields: {

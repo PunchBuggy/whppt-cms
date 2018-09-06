@@ -7,6 +7,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.READ),
+    $security.authorise.type('projectId', 'type', $ROLES.READ),
     req => {
       const project = find($projects, { id: req.params.projectId });
       return Promise.resolve(find(project.types, { id: req.params.type }));
@@ -17,6 +18,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/attributes",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.READ),
+    $security.authorise.type('projectId', 'type', $ROLES.READ),
     req => {
       const _project = find($projects, { id: req.params.projectId });
       const _type = find(_project.types, { id: req.params.type });
@@ -28,6 +30,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/list",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.READ),
+    $security.authorise.type('projectId', 'type', $ROLES.READ),
     req => {
       return $db.Model.list(req.params);
     }
@@ -37,6 +40,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/model/:id",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.READ),
+    $security.authorise.type('projectId', 'type', $ROLES.READ),
     req => $db.Model.byId(req.params)
   );
 
@@ -44,6 +48,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/model",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.EDIT),
+    $security.authorise.type('projectId', 'type', $ROLES.EDIT),
     req => {
       const args = assign({ item: req.body }, req.params);
       return $db.Model.save(args);
@@ -54,6 +59,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/model/:id/delete",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.ADMIN),
+    $security.authorise.type('projectId', 'type', $ROLES.ADMIN),
     req => $db.Model.remove(req.params)
   );
 
@@ -61,6 +67,7 @@ export default ({ $JsonRouter, $security, $db, $ROLES, $projects }) => {
     "/api/project/:projectId/type/:type/order",
     $security.authenticate(),
     $security.authorise.project("projectId", $ROLES.EDIT),
+    $security.authorise.type('projectId', 'type', $ROLES.EDIT),
     req => {
       const args = assign({ items: req.body }, req.params);
       return $db.Model.order(args);

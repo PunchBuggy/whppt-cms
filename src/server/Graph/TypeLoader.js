@@ -8,7 +8,7 @@ const {
 const _ = require("lodash");
 const controls = require("./controls");
 
-export default ({ $db }) => {
+export default ({ $db, $security }) => {
   return {
     loadQuery: (project, type) => {
       const typeDef = {
@@ -32,6 +32,10 @@ export default ({ $db }) => {
         type: type.single ? _type : new GraphQLList(_type),
         args: type.single ? undefined : { id: { type: GraphQLString } },
         resolve(parent, args) {
+          // parent is the token for w/e reason
+          if (!$security.checkTypePermission(parent, project.id, type.id, 'read')) {
+            throw new Error('Not permitted.');
+          }
           const _args = { id: args.id, type: type.id, projectId: project.id };
           if (type.single) return $db.Model.byId(_args);
           if (args.id) return [$db.Model.byId(_args)];
@@ -80,6 +84,10 @@ export default ({ $db }) => {
         type: type.single ? _resultType : _resultType,
         args,
         resolve(parent, args) {
+          // parent is the token for w/e reason
+          if (!$security.checkTypePermission(parent, project.id, type.id, 'edit')) {
+            throw new Error('Not permitted.');
+          }
           const _args = {
             projectId: project.id,
             type: type.id,

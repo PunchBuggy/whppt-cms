@@ -5,6 +5,7 @@ import Security from "./security.router";
 import Project from "./project.router";
 import Model from "./model.router";
 import Images from "./images.router";
+import Users from "./users.router";
 
 export default context => {
   const router = context.$JsonRouter();
@@ -60,6 +61,7 @@ export default context => {
     Security(context),
     Project(context),
     Model(context),
-    Images(context)
+    Images(context),
+    Users(context),
   ];
 };

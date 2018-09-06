@@ -1,23 +1,28 @@
-const express = require('express');
-const router = require_local('services/json_router')();
-const sec = require_local('services/security');
+export default ({$JsonRouter, $security, $db}) => {
+  const router = $JsonRouter();
 
-const queryById = require_local('domain/User/queries/byId');
+  router.get('/api/users',
+    $security.authenticate(),
+    $security.authorise.root(),
+    () => {
+      return $db.User.list().then(list => list.map(user => ({
+        id: user.id,
+        email: user.email,
+        projects: user.projects,
+      })))
+    }
+  );
 
-const ROLES = sec.ROLES;
+  router.post('/api/user/:id',
+    $security.authenticate(),
+    $security.authorise.root(),
+    req => {
+      return $db.User.save({
+        id: req.params.id,
+        user: req.body,
+      })
+    }
+  );
 
-router.get('/users',
-  sec.authenticate(),
-  function(req) {
-    return Promise.resolve([
-      { name: 'Joe' }
-    ]);
-  });
-
-router.get('/api/user',
-  sec.authenticate(),
-  function(req) {
-    return queryById(req.user.account)
-  });
-
-module.exports = router;
+  return router
+}

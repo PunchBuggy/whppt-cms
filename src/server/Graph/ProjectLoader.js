@@ -2,8 +2,8 @@ const { GraphQLObjectType, GraphQLString, GraphQLNonNull } = require("graphql");
 const _ = require("lodash");
 import TypeDefLoader from "./TypeLoader";
 
-export default ({ $decodeAccessToken, $db }) => {
-  const typeDefLoader = TypeDefLoader({ $db });
+export default ({ $decodeAccessToken, $db, $security }) => {
+  const typeDefLoader = TypeDefLoader({ $db, $security });
 
   return {
     loadQueries: projectConfig => {

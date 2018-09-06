@@ -8,7 +8,7 @@ module.exports = ({ $db, $logger, $config }) => {
   const issuer = _.get($config, "security.token.issuer", "whppt");
   const audience = _.get($config, "security.token.audience", "");
 
-  return {
+  const security = {
     createIdToken(user) {
       return jwt.sign(user, secret, { expiresIn: 60 * 60 * 24 });
     },
@@ -20,6 +20,7 @@ module.exports = ({ $db, $logger, $config }) => {
       const scope = {
         account: user.id,
         email: user.email,
+        rootUser: user.rootUser,
         projects: user.projects
       };
 
@@ -75,6 +76,16 @@ module.exports = ({ $db, $logger, $config }) => {
     },
 
     authorise: {
+      root() {
+        return (req, res, next) => {
+          const permissions = req.token.scope;
+          if (!permissions.rootUser) {
+            return res.sendStatus(403);
+          }
+          next();
+        }
+      },
+
       account(accountParam) {
         return (req, res, next) => {
           const requestedAccount = req.params[accountParam];
@@ -85,6 +96,7 @@ module.exports = ({ $db, $logger, $config }) => {
           next();
         };
       },
+
       project(project_param, role) {
         return (req, res, next) => {
           const permissions = req.token.scope;
@@ -94,23 +106,60 @@ module.exports = ({ $db, $logger, $config }) => {
           });
 
           const hasProjectAccess =
-            !!projectPermission &&
-            _.includes(projectPermission.permissions, role);
+            !!projectPermission && (
+              _.includes(projectPermission.permissions, role) ||
+              _.values(projectPermission.typePermissions).some(perm => perm.includes(role))
+            );
 
           if (hasProjectAccess) return next();
 
           return res.sendStatus(403);
         };
-      }
+      },
+
+      type(projParam, typeParam, role) {
+        return (req, res, next) => {
+          const hasAccess = security.checkTypePermission(
+            req.token,
+            req.params[projParam],
+            req.params[typeParam],
+            role
+          )
+          if (hasAccess) { return next(); }
+          return res.sendStatus(403);
+        }
+      },
+    },
+
+    checkTypePermission(token, projectId, typeId, role) {
+      const user = token.scope
+      const project = user.projects.find(project => project.id === projectId)
+
+      if (!project) { return false }
+      if (project.permissions.includes(role)) { return true }
+      if (!project.typePermissions) { return false }
+
+      const typePermissions = project.typePermissions[typeId]
+      return typePermissions && typePermissions.includes(role)
     },
 
     login(creds) {
-      return $db.User.forLogin(creds).then(user => {
-        return Promise.resolve({
-          user: { id: user.id, email: user.email },
-          access_token: this.createAccessToken(user)
-        });
-      });
+      return $db.User.forLogin(creds).then(this._generateUserResponse.bind(this));
+    },
+
+    signUp(creds) {
+      return $db.User.signUp(creds).then(this._generateUserResponse.bind(this))
+    },
+
+    _generateUserResponse(user) {
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          rootUser: user.rootUser,
+        },
+        access_token: this.createAccessToken(user)
+      }
     },
 
     ROLES: {
@@ -120,4 +169,6 @@ module.exports = ({ $db, $logger, $config }) => {
       ADMIN: "admin"
     }
   };
+
+  return security;
 };
