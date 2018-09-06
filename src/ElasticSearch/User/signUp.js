@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 
-export default ({$elastic, $options, $indexSettings}) => {
+export default ({$elastic, $indexSettings}) => {
   return (context, {id, email, password}) => {
     // Hash etc the password
     const saltRounds = 10

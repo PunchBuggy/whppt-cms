@@ -22,8 +22,8 @@
               :id="user.id + '|' + project.id + '|' + role"
               :checked="userHasRole(user, project, role)"
               @change="setPermission({
-                user: user.id,
-                project: project.id,
+                user,
+                project,
                 role,
                 value: $event.target.checked
               })"
@@ -64,8 +64,11 @@ export default {
 
     userHasRole(user, project, role) {
       const userProject = user.projects.find(p => p.id === project.id)
+      if (!userProject) {
+        return false
+      }
       return userProject.permissions.includes(role)
-    }
+    },
   },
   computed: {
    ...Vuex.mapState('user', {userList: 'list'}),

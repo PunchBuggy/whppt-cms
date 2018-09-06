@@ -7,11 +7,17 @@ export default {
   },
 
   setPermission(state, payload) {
-    const user = state.list.find(user => user.id === payload.user)
+    const user = state.list.find(user => user.id === payload.user.id)
     if (!user) { return }
 
-    const project = user.projects.find(project => project.id === payload.project)
-    if (!project) { return }
+    let project = user.projects.find(project => project.id === payload.project.id)
+    if (!project) {
+      project = {
+        ...payload.project,
+        permissions: [],
+      }
+      user.projects.push(project)
+    }
 
     if (payload.value) {
       project.permissions.push(payload.role)
@@ -20,6 +26,10 @@ export default {
       if (index > -1) {
         project.permissions.splice(index, 1)
       }
+    }
+
+    if (!project.permissions.length) {
+      user.projects = user.projects.filter(proj => proj.id !== project.id)
     }
   },
 
